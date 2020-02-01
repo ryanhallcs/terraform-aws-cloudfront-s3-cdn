@@ -1,5 +1,4 @@
 locals {
-  using_existing_origin = signum(length(var.origin_bucket)) == 1
   website_enabled       = var.redirect_all_requests_to != "" || var.index_document != "" || var.error_document != "" || var.routing_rules != ""
   website_config = {
     redirect_all = [
@@ -70,7 +69,7 @@ data "template_file" "default" {
 }
 
 resource "aws_s3_bucket_policy" "default" {
-  count  = local.using_existing_origin && ! var.override_origin_bucket_policy ? 0 : 1
+  count  = ! var.override_origin_bucket_policy ? 0 : 1
   bucket = local.bucket
   policy = data.template_file.default.rendered
 }
@@ -79,7 +78,6 @@ data "aws_region" "current" {
 }
 
 resource "aws_s3_bucket" "origin" {
-  count         = local.using_existing_origin ? 0 : 1
   bucket        = module.origin_label.id
   acl           = "private"
   tags          = module.origin_label.tags
