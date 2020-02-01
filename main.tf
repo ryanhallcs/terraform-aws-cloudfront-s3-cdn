@@ -1,6 +1,6 @@
 locals {
   using_existing_origin = signum(length(var.origin_bucket)) == 1
-  website_enabled = var.redirect_all_requests_to != "" || var.index_document != "" || var.error_document != "" || var.routing_rules != ""
+  website_enabled       = var.redirect_all_requests_to != "" || var.index_document != "" || var.error_document != "" || var.routing_rules != ""
   website_config = {
     redirect_all = [
       {
@@ -186,7 +186,7 @@ resource "aws_cloudfront_distribution" "default" {
   dynamic "origin" {
     for_each = var.alias_paths
 
-    content = {
+    content {
       domain_name = each.value
       origin_id   = module.distribution_label.id
       origin_path = each.key
