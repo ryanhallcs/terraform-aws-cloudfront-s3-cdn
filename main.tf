@@ -38,7 +38,7 @@ data "aws_iam_policy_document" "origin" {
     sid = "S3GetObjectForCloudFront"
 
     actions   = ["s3:GetObject"]
-    resources = ["arn:aws:s3:::$${bucket_name}$${origin_path}*"]
+    resources = ["arn:aws:s3:::$${bucket_name}*"]
 
     principals {
       type        = "AWS"
@@ -63,7 +63,7 @@ data "template_file" "default" {
   template = data.aws_iam_policy_document.origin.json
 
   vars = {
-    origin_path                               = coalesce(var.origin_path, "/")
+    origin_path                               = "/"
     bucket_name                               = local.bucket
     cloudfront_origin_access_identity_iam_arn = aws_cloudfront_origin_access_identity.default.iam_arn
   }
