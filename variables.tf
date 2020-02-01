@@ -81,23 +81,29 @@ variable "additional_bucket_policy" {
   description = "Additional policies for the bucket. If included in the policies, the variables `$${bucket_name}`, `$${origin_path}` and `$${cloudfront_origin_access_identity_iam_arn}` will be substituted. It is also possible to override the default policy statements by providing statements with `S3GetObjectForCloudFront` and `S3ListBucketForCloudFront` sid."
 }
 
+variable "override_origin_bucket_policy" {
+  type        = string
+  default     = true
+  description = "When using an existing origin bucket (through var.origin_bucket), setting this to 'false' will make it so the existing bucket policy will not be overriden"
+}
+
 variable "origin_bucket" {
   type        = string
   default     = ""
   description = "Origin S3 bucket name"
 }
 
-variable "origin_path" {
+variable "alias_paths" {
   # http://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-web-values-specify.html#DownloadDistValuesOriginPath
-  type        = string
+  type        = map(string)
   description = "An optional element that causes CloudFront to request your content from a directory in your Amazon S3 bucket or your custom origin. It must begin with a /. Do not add a / at the end of the path."
-  default     = ""
+  default     = "{}"
 }
 
 variable "origin_force_destroy" {
   type        = bool
   default     = false
-  description = "Delete all objects from the bucket  so that the bucket can be destroyed without error (e.g. `true` or `false`)"
+  description = "Delete all objects from the bucket so that the bucket can be destroyed without error (e.g. `true` or `false`)"
 }
 
 variable "bucket_domain_format" {
@@ -218,6 +224,12 @@ variable "viewer_protocol_policy" {
   type        = string
   description = "allow-all, redirect-to-https"
   default     = "redirect-to-https"
+}
+
+variable "caching_blacklist" {
+  type        = set(string)
+  default     = []
+  description = "Paths of objects that should never be cached for any HTTP methods"
 }
 
 variable "allowed_methods" {

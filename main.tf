@@ -1,4 +1,5 @@
 locals {
+  using_existing_origin = signum(length(var.origin_bucket)) == 1
   website_enabled = var.redirect_all_requests_to != "" || var.index_document != "" || var.error_document != "" || var.routing_rules != ""
   website_config = {
     redirect_all = [
@@ -69,6 +70,7 @@ data "template_file" "default" {
 }
 
 resource "aws_s3_bucket_policy" "default" {
+  count  = local.using_existing_origin && ! var.override_origin_bucket_policy ? 0 : 1
   bucket = local.bucket
   policy = data.template_file.default.rendered
 }
@@ -77,7 +79,7 @@ data "aws_region" "current" {
 }
 
 resource "aws_s3_bucket" "origin" {
-  count         = signum(length(var.origin_bucket)) == 1 ? 0 : 1
+  count         = local.using_existing_origin ? 0 : 1
   bucket        = module.origin_label.id
   acl           = "private"
   tags          = module.origin_label.tags
@@ -148,7 +150,8 @@ data "aws_s3_bucket" "selected" {
 }
 
 locals {
-  bucket = join("",
+  bucket = join(
+    "",
     compact(
       concat([var.origin_bucket], concat([""], aws_s3_bucket.origin.*.id))
     )
@@ -180,13 +183,17 @@ resource "aws_cloudfront_distribution" "default" {
 
   aliases = var.acm_certificate_arn != "" ? var.aliases : []
 
-  origin {
-    domain_name = local.bucket_domain_name
-    origin_id   = module.distribution_label.id
-    origin_path = var.origin_path
+  dynamic "origin" {
+    for_each = var.alias_paths
 
-    s3_origin_config {
-      origin_access_identity = aws_cloudfront_origin_access_identity.default.cloudfront_access_identity_path
+    content = {
+      domain_name = each.value
+      origin_id   = module.distribution_label.id
+      origin_path = each.key
+
+      s3_origin_config {
+        origin_access_identity = aws_cloudfront_origin_access_identity.default.cloudfront_access_identity_path
+      }
     }
   }
 
@@ -225,6 +232,32 @@ resource "aws_cloudfront_distribution" "default" {
         include_body = lookup(lambda_function_association.value, "include_body", null)
         lambda_arn   = lambda_function_association.value.lambda_arn
       }
+    }
+  }
+
+  dynamic "ordered_cache_behavior" {
+    for_each = var.caching_blacklist
+    content {
+      path_pattern     = ordered_cache_behavior.value
+      allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+      cached_methods   = ["GET", "HEAD", "OPTIONS"]
+      target_origin_id = module.distribution_label.id
+      compress         = var.compress
+      trusted_signers  = var.trusted_signers
+
+      forwarded_values {
+        query_string = var.forward_query_string
+        headers      = var.forward_header_values
+
+        cookies {
+          forward = var.forward_cookies
+        }
+      }
+
+      viewer_protocol_policy = var.viewer_protocol_policy
+      default_ttl            = 0
+      min_ttl                = 0
+      max_ttl                = 0
     }
   }
 
