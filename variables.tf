@@ -63,12 +63,6 @@ variable "minimum_protocol_version" {
   default     = "TLSv1"
 }
 
-variable "aliases" {
-  type        = list(string)
-  description = "List of FQDN's - Used to set the Alternate Domain Names (CNAMEs) setting on Cloudfront"
-  default     = []
-}
-
 variable "use_regional_s3_endpoint" {
   type        = bool
   description = "When set to 'true' the s3 origin_bucket will use the regional endpoint address instead of the global endpoint address"

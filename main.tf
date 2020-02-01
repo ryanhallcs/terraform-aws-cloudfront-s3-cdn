@@ -112,7 +112,7 @@ resource "aws_s3_bucket" "origin" {
     allowed_headers = var.cors_allowed_headers
     allowed_methods = var.cors_allowed_methods
     allowed_origins = sort(
-      distinct(compact(concat(var.cors_allowed_origins, var.aliases)))
+      distinct(compact(concat(var.cors_allowed_origins, values(var.alias_paths))))
     )
     expose_headers  = var.cors_expose_headers
     max_age_seconds = var.cors_max_age_seconds
@@ -181,7 +181,7 @@ resource "aws_cloudfront_distribution" "default" {
     }
   }
 
-  aliases = var.acm_certificate_arn != "" ? var.aliases : []
+  aliases = var.acm_certificate_arn != "" ? values(var.alias_paths) : []
 
   dynamic "origin" {
     for_each = var.alias_paths
@@ -287,7 +287,7 @@ resource "aws_cloudfront_distribution" "default" {
 module "dns" {
   source           = "git::https://github.com/cloudposse/terraform-aws-route53-alias.git?ref=tags/0.4.0"
   enabled          = var.enabled && (var.parent_zone_id != "" || var.parent_zone_name != "") ? true : false
-  aliases          = var.aliases
+  aliases          = values(var.alias_paths)
   parent_zone_id   = var.parent_zone_id
   parent_zone_name = var.parent_zone_name
   target_dns_name  = aws_cloudfront_distribution.default.domain_name
