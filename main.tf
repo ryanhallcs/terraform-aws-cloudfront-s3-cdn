@@ -151,7 +151,7 @@ locals {
   bucket = join(
     "",
     compact(
-      concat([var.origin_bucket], concat([""], aws_s3_bucket.origin.*.id))
+      concat([var.origin_bucket], concat([""], aws_s3_bucket.origin.id))
     )
   )
 
