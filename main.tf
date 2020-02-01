@@ -144,7 +144,7 @@ module "distribution_label" {
 }
 
 data "aws_s3_bucket" "selected" {
-  bucket = local.bucket ? var.static_s3_bucket : local.bucket
+  bucket = local.bucket == "" ? var.static_s3_bucket : local.bucket
 }
 
 locals {
