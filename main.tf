@@ -187,9 +187,9 @@ resource "aws_cloudfront_distribution" "default" {
     for_each = var.alias_paths
 
     content {
-      domain_name = origin.value.value
+      domain_name = origin.value
       origin_id   = module.distribution_label.id
-      origin_path = origin.value.key
+      origin_path = origin.key
 
       s3_origin_config {
         origin_access_identity = aws_cloudfront_origin_access_identity.default.cloudfront_access_identity_path
