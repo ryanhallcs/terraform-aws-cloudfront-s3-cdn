@@ -291,7 +291,7 @@ variable "parent_zone_name" {
 
 variable "static_s3_bucket" {
   type    = string
-  default = "aws-cli"
+  default = "rhea-terraform"
 
   description = <<DOC
 aws-cli is a bucket owned by amazon that will perminantly exist.
