@@ -147,7 +147,7 @@ Available targets:
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
 | acm_certificate_arn | Existing ACM Certificate ARN | string | `` | no |
-| additional_bucket_policy | Additional policies for the bucket. If included in the policies, the variables `$${bucket_name}`, `$${origin_path}` and `$${cloudfront_origin_access_identity_iam_arn}` will be substituted. It is also possible to override the default policy statements by providing statements with `S3GetObjectForCloudFront` and `S3ListBucketForCloudFront` sid. | string | `{}` | no |
+| additional_bucket_policy | Additional policies for the bucket. If included in the policies, the variables `$${bucket_name}`, and `$${cloudfront_origin_access_identity_iam_arn}` will be substituted. It is also possible to override the default policy statements by providing statements with `S3GetObjectForCloudFront` and `S3ListBucketForCloudFront` sid. | string | `{}` | no |
 | aliases | List of FQDN's - Used to set the Alternate Domain Names (CNAMEs) setting on Cloudfront | list(string) | `<list>` | no |
 | allowed_methods | List of allowed methods (e.g. GET, PUT, POST, DELETE, HEAD) for AWS CloudFront | list(string) | `<list>` | no |
 | attributes | Additional attributes (e.g. `1`) | list(string) | `<list>` | no |
@@ -191,7 +191,6 @@ Available targets:
 | namespace | Namespace (e.g. `eg` or `cp`) | string | `` | no |
 | origin_bucket | Origin S3 bucket name | string | `` | no |
 | origin_force_destroy | Delete all objects from the bucket so that the bucket can be destroyed without error (e.g. `true` or `false`) | bool | `false` | no |
-| origin_path | An optional element that causes CloudFront to request your content from a directory in your Amazon S3 bucket or your custom origin. It must begin with a /. Do not add a / at the end of the path. | string | `` | no |
 | override_origin_bucket_policy | When using an existing origin bucket (through var.origin_bucket), setting this to 'false' will make it so the existing bucket policy will not be overriden | string | `true` | no |
 | parent_zone_id | ID of the hosted zone to contain this record  (or specify `parent_zone_name`) | string | `` | no |
 | parent_zone_name | Name of the hosted zone to contain this record (or specify `parent_zone_id`) | string | `` | no |
