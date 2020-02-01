@@ -38,7 +38,7 @@ output "s3_bucket_domain_name" {
   description = "Domain of S3 bucket"
 }
 
-output "aliases" {
-  value       = var.aliases
-  description = "Aliases of the CloudFront distibution"
+output "alias_paths" {
+  value       = var.alias_paths
+  description = "Aliases and paths of the CloudFront distibution"
 }
