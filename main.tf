@@ -37,7 +37,7 @@ data "aws_iam_policy_document" "origin" {
     sid = "S3GetObjectForCloudFront"
 
     actions   = ["s3:GetObject"]
-    resources = ["arn:aws:s3:::$${bucket_name}*"]
+    resources = ["arn:aws:s3:::$${bucket_name}$${origin_path}*"]
 
     principals {
       type        = "AWS"
