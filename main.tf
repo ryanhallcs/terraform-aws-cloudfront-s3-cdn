@@ -77,6 +77,7 @@ data "aws_region" "current" {
 }
 
 resource "aws_s3_bucket" "origin" {
+  count         = signum(length(var.origin_bucket)) == 1 ? 0 : 1
   bucket        = module.origin_label.id
   acl           = "private"
   tags          = module.origin_label.tags
@@ -150,7 +151,7 @@ locals {
   bucket = join(
     "",
     compact(
-      concat([var.origin_bucket], concat([""], aws_s3_bucket.origin.id))
+      concat([var.origin_bucket], concat([""], aws_s3_bucket.origin.*.id))
     )
   )
 
