@@ -148,7 +148,7 @@ data "aws_s3_bucket" "selected" {
 }
 
 locals {
-  bucket = coalesce(var.origin_bucket, aws_s3_bucket.origin.0.id)
+  bucket = coalesce(var.origin_bucket, aws_s3_bucket.origin.*.id)
 
   bucket_domain_name = var.use_regional_s3_endpoint ? format(
     "%s.s3-%s.amazonaws.com",
