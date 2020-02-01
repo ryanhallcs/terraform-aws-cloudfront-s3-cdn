@@ -69,7 +69,6 @@ data "template_file" "default" {
 }
 
 resource "aws_s3_bucket_policy" "default" {
-  count  = ! var.override_origin_bucket_policy ? 0 : 1
   bucket = local.bucket
   policy = data.template_file.default.rendered
 }
