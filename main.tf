@@ -1,5 +1,5 @@
 locals {
-  website_enabled       = var.redirect_all_requests_to != "" || var.index_document != "" || var.error_document != "" || var.routing_rules != ""
+  website_enabled = var.redirect_all_requests_to != "" || var.index_document != "" || var.error_document != "" || var.routing_rules != ""
   website_config = {
     redirect_all = [
       {
