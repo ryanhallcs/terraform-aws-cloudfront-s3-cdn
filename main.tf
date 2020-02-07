@@ -204,7 +204,7 @@ resource "aws_cloudfront_distribution" "default" {
   default_cache_behavior {
     allowed_methods  = var.allowed_methods
     cached_methods   = var.cached_methods
-    target_origin_id = "${module.distribution_label.id}-${var.alias_paths[0].key}"
+    target_origin_id = "${module.distribution_label.id}-${keys(var.alias_paths)[0]}"
     compress         = var.compress
     trusted_signers  = var.trusted_signers
 
