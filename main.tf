@@ -186,7 +186,7 @@ resource "aws_cloudfront_distribution" "default" {
     content {
       domain_name = local.bucket_domain_name
       origin_id   = "${module.distribution_label.id}-${origin.key}"
-      origin_path = origin.key
+      origin_path = "/${origin.key}"
 
       s3_origin_config {
         origin_access_identity = aws_cloudfront_origin_access_identity.default.cloudfront_access_identity_path
