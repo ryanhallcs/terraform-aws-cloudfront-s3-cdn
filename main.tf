@@ -184,7 +184,7 @@ resource "aws_cloudfront_distribution" "default" {
     for_each = var.alias_paths
 
     content {
-      domain_name = origin.value
+      domain_name = local.bucket_domain_name
       origin_id   = "${module.distribution_label.id}-${origin.key}"
       origin_path = origin.key
 
