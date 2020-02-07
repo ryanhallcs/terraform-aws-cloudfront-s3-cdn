@@ -185,7 +185,7 @@ resource "aws_cloudfront_distribution" "default" {
 
     content {
       domain_name = origin.value
-      origin_id   = module.distribution_label.id
+      origin_id   = "${module.distribution_label.id}-${origin.key}"
       origin_path = origin.key
 
       s3_origin_config {
@@ -204,7 +204,7 @@ resource "aws_cloudfront_distribution" "default" {
   default_cache_behavior {
     allowed_methods  = var.allowed_methods
     cached_methods   = var.cached_methods
-    target_origin_id = module.distribution_label.id
+    target_origin_id = "${module.distribution_label.id}-${var.alias_paths[0].key}"
     compress         = var.compress
     trusted_signers  = var.trusted_signers
 
@@ -233,12 +233,12 @@ resource "aws_cloudfront_distribution" "default" {
   }
 
   dynamic "ordered_cache_behavior" {
-    for_each = var.caching_blacklist
+    for_each = var.alias_paths
     content {
-      path_pattern     = ordered_cache_behavior.value
+      path_pattern     = ordered_cache_behavior.key
       allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
       cached_methods   = ["GET", "HEAD", "OPTIONS"]
-      target_origin_id = module.distribution_label.id
+      target_origin_id = "${module.distribution_label.id}-${ordered_cache_behavior.key}"
       compress         = var.compress
       trusted_signers  = var.trusted_signers
 
